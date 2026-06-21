@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: "Outfit Variable", "Outfit", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Outfit Variable", "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque Variable", "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
 
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -35,59 +35,61 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --color-violet: var(--violet);
-  --color-pink: var(--pink);
-  --color-blue: var(--blue);
-  --color-glow: var(--glow);
+
+  --color-melo-blue: var(--melo-blue);
+  --color-melo-green: var(--melo-green);
+  --color-melo-violet: var(--melo-violet);
+  --color-melo-pink: var(--melo-pink);
+  --color-melo-yellow: var(--melo-yellow);
+  --color-ink: var(--ink);
 }
 
 :root {
-  --radius: 1rem;
+  --radius: 1.25rem;
 
-  /* Vibe palette — deep midnight + violet + pink */
-  --background: oklch(0.13 0.05 280);
-  --foreground: oklch(0.98 0.01 300);
+  /* Melo palette — light cream background, ink-black cards, vibrant accents */
+  --background: oklch(0.97 0.015 95);
+  --foreground: oklch(0.15 0.02 280);
 
-  --card: oklch(0.18 0.06 285);
-  --card-foreground: oklch(0.98 0.01 300);
+  --ink: oklch(0.14 0.025 270);
 
-  --popover: oklch(0.18 0.06 285);
-  --popover-foreground: oklch(0.98 0.01 300);
+  --card: var(--ink);
+  --card-foreground: oklch(0.98 0.01 280);
 
-  --primary: oklch(0.68 0.24 305);          /* violet */
+  --popover: oklch(0.99 0.005 280);
+  --popover-foreground: oklch(0.15 0.02 280);
+
+  --primary: oklch(0.65 0.22 280);
   --primary-foreground: oklch(0.99 0 0);
 
-  --secondary: oklch(0.22 0.07 285);
-  --secondary-foreground: oklch(0.98 0.01 300);
+  --secondary: oklch(0.94 0.02 280);
+  --secondary-foreground: oklch(0.15 0.02 280);
 
-  --muted: oklch(0.22 0.05 285);
-  --muted-foreground: oklch(0.72 0.04 300);
+  --muted: oklch(0.93 0.015 95);
+  --muted-foreground: oklch(0.45 0.03 280);
 
-  --accent: oklch(0.72 0.25 350);           /* hot pink */
+  --accent: oklch(0.72 0.2 350);
   --accent-foreground: oklch(0.99 0 0);
 
-  --destructive: oklch(0.65 0.24 25);
+  --destructive: oklch(0.62 0.24 25);
   --destructive-foreground: oklch(0.99 0 0);
 
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 12%);
-  --ring: oklch(0.68 0.24 305);
+  --border: oklch(0.15 0.02 280 / 12%);
+  --input: oklch(0.15 0.02 280 / 10%);
+  --ring: oklch(0.65 0.22 280);
 
-  /* Brand tokens */
-  --violet: oklch(0.68 0.24 305);
-  --pink: oklch(0.72 0.25 350);
-  --blue: oklch(0.62 0.22 260);
-  --glow: oklch(0.78 0.22 320);
+  /* Melo brand tokens */
+  --melo-blue: #3b6dff;
+  --melo-green: #34e0a1;
+  --melo-violet: #8a5cff;
+  --melo-pink: #ff5ea8;
+  --melo-yellow: #ffd84a;
 
-  --gradient-vibe: linear-gradient(135deg, oklch(0.62 0.22 260) 0%, oklch(0.68 0.24 305) 50%, oklch(0.72 0.25 350) 100%);
-  --gradient-card: linear-gradient(160deg, oklch(0.22 0.08 285) 0%, oklch(0.16 0.05 280) 100%);
-  --gradient-aurora: radial-gradient(60% 50% at 50% 0%, oklch(0.68 0.24 305 / 0.35), transparent 70%),
-                     radial-gradient(40% 40% at 90% 100%, oklch(0.72 0.25 350 / 0.25), transparent 70%),
-                     radial-gradient(50% 50% at 0% 80%, oklch(0.62 0.22 260 / 0.3), transparent 70%);
+  --gradient-melo: linear-gradient(135deg, var(--melo-blue), var(--melo-violet) 50%, var(--melo-pink));
+  --gradient-cool: linear-gradient(135deg, var(--melo-green), var(--melo-blue));
 
-  --shadow-glow: 0 0 40px -8px oklch(0.68 0.24 305 / 0.6);
-  --shadow-pink: 0 0 32px -8px oklch(0.72 0.25 350 / 0.55);
-  --shadow-soft: 0 12px 40px -12px oklch(0 0 0 / 0.6);
+  --shadow-pop: 0 14px 40px -16px oklch(0.15 0.02 280 / 0.35);
+  --shadow-glow: 0 0 0 1px var(--melo-violet), 0 18px 40px -18px oklch(0.55 0.25 290 / 0.55);
 }
 
 @layer base {
@@ -99,33 +101,31 @@
     background: var(--background);
     color: var(--foreground);
     font-family: var(--font-sans);
+    font-feature-settings: "ss01", "ss02";
     -webkit-font-smoothing: antialiased;
-    background-image: var(--gradient-aurora);
+    background-image:
+      radial-gradient(60% 40% at 10% 0%, color-mix(in oklab, var(--melo-violet) 18%, transparent), transparent 70%),
+      radial-gradient(40% 30% at 100% 10%, color-mix(in oklab, var(--melo-pink) 18%, transparent), transparent 70%),
+      radial-gradient(50% 40% at 50% 100%, color-mix(in oklab, var(--melo-blue) 14%, transparent), transparent 70%);
     background-attachment: fixed;
   }
 
-  ::selection { background: var(--violet); color: white; }
+  ::selection { background: var(--melo-violet); color: white; }
 }
 
-@utility bg-vibe { background: var(--gradient-vibe); }
-@utility bg-card-gradient { background: var(--gradient-card); }
-@utility shadow-glow { box-shadow: var(--shadow-glow); }
-@utility shadow-pink { box-shadow: var(--shadow-pink); }
-@utility shadow-soft { box-shadow: var(--shadow-soft); }
-@utility text-vibe {
-  background: var(--gradient-vibe);
+@utility bg-melo { background: var(--gradient-melo); }
+@utility bg-cool { background: var(--gradient-cool); }
+@utility text-melo {
+  background: var(--gradient-melo);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
+@utility shadow-pop { box-shadow: var(--shadow-pop); }
+@utility shadow-glow { box-shadow: var(--shadow-glow); }
 
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+@keyframes pop-in {
+  0% { transform: scale(0.92); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
-@keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px -4px oklch(0.68 0.24 305 / 0.5); }
-  50% { box-shadow: 0 0 40px -4px oklch(0.72 0.25 350 / 0.7); }
-}
-@utility animate-float { animation: float-slow 4s ease-in-out infinite; }
-@utility animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+@utility animate-pop { animation: pop-in 280ms cubic-bezier(0.22, 1, 0.36, 1); }

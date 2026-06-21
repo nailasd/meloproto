@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
-import "@fontsource-variable/outfit/index.css";
+import "@fontsource-variable/bricolage-grotesque/index.css";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -78,10 +78,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "vibematch" },
-      { name: "description", content: "Music that matches your vibe — a human-powered discovery network." },
-      { property: "og:title", content: "vibematch" },
-      { property: "og:description", content: "Share song pairs that share a vibe." },
+      { title: "Melo — vote & match the sounds that share your vibe" },
+      { name: "description", content: "Melo is a music discovery network where the community pairs songs by vibe." },
+      { property: "og:title", content: "Melo" },
+      { property: "og:description", content: "Vote on song matches. Propose your own." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
