@@ -11,10 +11,12 @@ export type Match = {
   source: Track;
   match: Track;
   vibe: string;
+  genre: "rap-fr" | "chill" | "love" | "drive" | "lo-fi" | "euphoria";
   author: { name: string; avatarColor: string };
   likes: number;
   createdAt: string;
 };
+
 
 export type Universe = {
   id: string;
@@ -42,13 +44,16 @@ const tracks: Track[] = [
 export const allTracks = tracks;
 
 export const mockMatches: Match[] = [
-  { id: "m1", source: tracks[0], match: tracks[7], vibe: "melancholic dreams", author: { name: "naïla", avatarColor: "#c084fc" }, likes: 142, createdAt: "2h" },
-  { id: "m2", source: tracks[2], match: tracks[9], vibe: "late night drive", author: { name: "ana", avatarColor: "#f472b6" }, likes: 89, createdAt: "5h" },
-  { id: "m3", source: tracks[4], match: tracks[3], vibe: "warm summer haze", author: { name: "leo", avatarColor: "#60a5fa" }, likes: 231, createdAt: "1d" },
-  { id: "m4", source: tracks[5], match: tracks[6], vibe: "after midnight", author: { name: "mira", avatarColor: "#fb7185" }, likes: 67, createdAt: "1d" },
-  { id: "m5", source: tracks[8], match: tracks[1], vibe: "soft heartbreak", author: { name: "sam", avatarColor: "#a78bfa" }, likes: 312, createdAt: "2d" },
-  { id: "m6", source: tracks[3], match: tracks[7], vibe: "frank ocean spiral", author: { name: "kim", avatarColor: "#e879f9" }, likes: 188, createdAt: "3d" },
+  { id: "m1", source: tracks[0], match: tracks[7], vibe: "melancholic dreams", genre: "love",    author: { name: "naïla", avatarColor: "#c084fc" }, likes: 142, createdAt: "2h" },
+  { id: "m2", source: tracks[2], match: tracks[9], vibe: "late night drive",   genre: "drive",   author: { name: "ana",   avatarColor: "#f472b6" }, likes: 89,  createdAt: "5h" },
+  { id: "m3", source: tracks[4], match: tracks[3], vibe: "warm summer haze",   genre: "chill",   author: { name: "leo",   avatarColor: "#a78bfa" }, likes: 231, createdAt: "1d" },
+  { id: "m4", source: tracks[5], match: tracks[6], vibe: "after midnight",     genre: "lo-fi",   author: { name: "mira",  avatarColor: "#fb7185" }, likes: 67,  createdAt: "1d" },
+  { id: "m5", source: tracks[8], match: tracks[1], vibe: "soft heartbreak",    genre: "love",    author: { name: "sam",   avatarColor: "#a78bfa" }, likes: 312, createdAt: "2d" },
+  { id: "m6", source: tracks[3], match: tracks[7], vibe: "frank ocean spiral", genre: "chill",   author: { name: "kim",   avatarColor: "#e879f9" }, likes: 188, createdAt: "3d" },
+  { id: "m7", source: tracks[10], match: tracks[1], vibe: "rap fr cold wave",  genre: "rap-fr",  author: { name: "yanis", avatarColor: "#c084fc" }, likes: 410, createdAt: "4h" },
+  { id: "m8", source: tracks[11], match: tracks[6], vibe: "neon euphoria",     genre: "euphoria",author: { name: "elsa",  avatarColor: "#f0abfc" }, likes: 256, createdAt: "6h" },
 ];
+
 
 export const vibes = [
   "chill", "euphoric", "melancholic", "late night drive", "summer haze",

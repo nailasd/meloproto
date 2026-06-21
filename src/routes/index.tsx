@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
-import { Heart, X, Sparkles, Search, Check, ArrowRight, Play } from "lucide-react";
+import { useMemo, useRef, useState } from "react";
+import { Heart, X, Flame, Search, Check, ArrowRight } from "lucide-react";
 import { Cover } from "@/components/Cover";
 import { PhoneShell } from "@/components/PhoneShell";
 import { allTracks, mockMatches, vibes, type Match, type Track } from "@/lib/mock-data";
@@ -52,82 +52,168 @@ function TabSwitcher({ tab, setTab }: { tab: Tab; setTab: (t: Tab) => void }) {
   );
 }
 
-const ACCENTS = [
-  "var(--melo-blue)",
-  "var(--melo-green)",
-  "var(--melo-violet)",
-  "var(--melo-pink)",
-  "var(--melo-yellow)",
-];
+const ACCENTS = ["var(--melo-violet)", "var(--melo-pink)"];
+
+const FILTERS = [
+  { id: "all",      label: "Pour toi" },
+  { id: "rap-fr",   label: "Rap FR" },
+  { id: "chill",    label: "Chill" },
+  { id: "love",     label: "Love" },
+  { id: "drive",    label: "Drive" },
+  { id: "lo-fi",    label: "Lo-fi" },
+  { id: "euphoria", label: "Euphoria" },
+] as const;
 
 function VoteView() {
+  const [filter, setFilter] = useState<string>("all");
   const [index, setIndex] = useState(0);
   const [votes, setVotes] = useState({ yes: 0, no: 0 });
-  const [lastVote, setLastVote] = useState<"yes" | "no" | null>(null);
+  const [exiting, setExiting] = useState<"yes" | "no" | null>(null);
 
-  const current = mockMatches[index % mockMatches.length];
+  const pool = useMemo(
+    () => (filter === "all" ? mockMatches : mockMatches.filter((m) => m.genre === filter)),
+    [filter]
+  );
+  const safe = pool.length > 0 ? pool : mockMatches;
+  const current = safe[index % safe.length];
   const accent = ACCENTS[index % ACCENTS.length];
 
+  // swipe state
+  const startX = useRef<number | null>(null);
+  const [drag, setDrag] = useState(0);
+
   const vote = (v: "yes" | "no") => {
+    if (exiting) return;
     setVotes((s) => ({ ...s, [v]: s[v] + 1 }));
-    setLastVote(v);
+    setExiting(v);
     setTimeout(() => {
       setIndex((i) => i + 1);
-      setLastVote(null);
-    }, 220);
+      setExiting(null);
+      setDrag(0);
+    }, 260);
   };
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    startX.current = e.clientX;
+    (e.target as Element).setPointerCapture?.(e.pointerId);
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (startX.current === null) return;
+    setDrag(e.clientX - startX.current);
+  };
+  const onPointerUp = () => {
+    if (startX.current === null) return;
+    if (drag > 110) vote("yes");
+    else if (drag < -110) vote("no");
+    else setDrag(0);
+    startX.current = null;
+  };
+
+  const translate = exiting === "yes" ? 520 : exiting === "no" ? -520 : drag;
+  const rotate = translate * 0.05;
+  const likeOpacity = Math.max(0, Math.min(1, drag / 120));
+  const passOpacity = Math.max(0, Math.min(1, -drag / 120));
 
   return (
     <section>
-      <div className="mb-2 flex items-baseline justify-between">
-        <h2 className="text-xl font-bold tracking-tight">Ce match, ça vibe&nbsp;?</h2>
-        <span className="text-xs font-medium text-foreground/50">{votes.yes + votes.no} votes</span>
+      {/* Filters */}
+      <div className="-mx-5 mb-5 overflow-x-auto px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <div className="flex gap-2 pb-1">
+          {FILTERS.map((f) => {
+            const active = f.id === filter;
+            return (
+              <button
+                key={f.id}
+                onClick={() => { setFilter(f.id); setIndex(0); }}
+                className={`shrink-0 rounded-full border-2 px-4 py-1.5 text-xs font-bold transition ${
+                  active
+                    ? "bg-melo border-transparent text-white shadow-pop"
+                    : "border-foreground/10 bg-white/70 text-foreground/70 backdrop-blur hover:border-foreground/30"
+                }`}
+              >
+                {f.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
-      <p className="mb-5 text-sm text-foreground/60">Vote si les deux sons partagent la même vibe.</p>
 
-      <div key={current.id + index} className="animate-pop">
-        <VoteCard match={current} accent={accent} />
+      {/* Swipeable card */}
+      <div className="relative touch-none select-none" style={{ minHeight: 460 }}>
+        <div
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerCancel={onPointerUp}
+          style={{
+            transform: `translateX(${translate}px) rotate(${rotate}deg)`,
+            transition: exiting || startX.current === null ? "transform 260ms cubic-bezier(0.22,1,0.36,1)" : "none",
+          }}
+        >
+          <VoteCard match={current} accent={accent} likeOpacity={likeOpacity} passOpacity={passOpacity} />
+        </div>
       </div>
 
-      <div className="mt-6 flex items-center justify-center gap-5">
+      {/* Buttons */}
+      <div className="mt-6 flex items-center justify-center gap-6">
         <button
           onClick={() => vote("no")}
-          className={`flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-foreground/10 bg-white text-foreground shadow-pop transition active:scale-95 ${lastVote === "no" ? "scale-90" : ""}`}
-          style={{ borderColor: lastVote === "no" ? "var(--melo-pink)" : undefined }}
+          className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-foreground/10 bg-white text-foreground shadow-pop transition active:scale-90"
           aria-label="Passer"
         >
           <X size={26} strokeWidth={3} />
         </button>
+        <span className="text-xs font-semibold text-foreground/40">{votes.yes + votes.no} votes</span>
         <button
           onClick={() => vote("yes")}
-          className={`bg-melo flex h-20 w-20 items-center justify-center rounded-2xl text-white shadow-glow transition active:scale-95 ${lastVote === "yes" ? "scale-90" : ""}`}
+          className="bg-melo flex h-16 w-16 items-center justify-center rounded-2xl text-white shadow-glow transition active:scale-90"
           aria-label="Ça matche"
         >
-          <Heart size={32} strokeWidth={2.6} fill="currentColor" />
-        </button>
-        <button
-          className="flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-foreground/10 bg-white text-foreground shadow-pop transition active:scale-95"
-          aria-label="Écouter"
-        >
-          <Play size={22} strokeWidth={2.6} fill="currentColor" />
+          <Heart size={28} strokeWidth={2.6} fill="currentColor" />
         </button>
       </div>
     </section>
   );
 }
 
-function VoteCard({ match, accent }: { match: Match; accent: string }) {
+function VoteCard({
+  match,
+  accent,
+  likeOpacity,
+  passOpacity,
+}: {
+  match: Match;
+  accent: string;
+  likeOpacity: number;
+  passOpacity: number;
+}) {
   return (
     <article
-      className="relative overflow-hidden rounded-[28px] p-5 text-card-foreground shadow-pop"
+      className="relative overflow-hidden rounded-[32px] p-5 text-card-foreground shadow-pop"
       style={{
         background: "var(--ink)",
         border: `2px solid ${accent}`,
-        boxShadow: `0 18px 40px -18px ${accent}80, 0 0 0 1px ${accent}30`,
+        boxShadow: `0 22px 50px -22px ${accent}99, 0 0 0 1px ${accent}30`,
       }}
     >
-      <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full opacity-40 blur-3xl" style={{ background: accent }} />
+      {/* swipe overlays */}
+      <div
+        className="pointer-events-none absolute left-5 top-5 z-20 rotate-[-12deg] rounded-xl border-2 px-3 py-1 text-sm font-extrabold uppercase tracking-widest"
+        style={{ borderColor: "var(--melo-pink)", color: "var(--melo-pink)", opacity: passOpacity }}
+      >
+        nope
+      </div>
+      <div
+        className="pointer-events-none absolute right-5 top-5 z-20 rotate-[12deg] rounded-xl border-2 px-3 py-1 text-sm font-extrabold uppercase tracking-widest"
+        style={{ borderColor: "var(--melo-violet-soft)", color: "var(--melo-violet-soft)", opacity: likeOpacity }}
+      >
+        match
+      </div>
 
+      <div className="pointer-events-none absolute -right-12 -top-12 h-48 w-48 rounded-full opacity-50 blur-3xl" style={{ background: accent }} />
+      <div className="pointer-events-none absolute -bottom-16 -left-10 h-40 w-40 rounded-full opacity-30 blur-3xl" style={{ background: accent }} />
+
+      {/* header */}
       <header className="relative mb-5 flex items-center gap-2.5">
         <div className="flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-bold text-white" style={{ background: accent }}>
           {match.author.name[0].toUpperCase()}
@@ -135,33 +221,43 @@ function VoteCard({ match, accent }: { match: Match; accent: string }) {
         <span className="text-sm font-semibold text-white">{match.author.name}</span>
         <span className="text-xs text-white/40">· {match.createdAt}</span>
         <span className="ml-auto inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold" style={{ background: `${accent}25`, color: accent }}>
-          <Sparkles size={11} /> {match.vibe}
+          {match.vibe}
         </span>
       </header>
 
-      <div className="relative grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-        <TrackSide track={match.source} />
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-pop" style={{ background: accent }}>
-          <Sparkles size={18} strokeWidth={2.6} />
+      {/* stacked tracks — taller layout */}
+      <div className="relative flex flex-col items-center gap-4 py-2">
+        <TrackRow track={match.source} accent={accent} />
+
+        <div className="relative flex w-full items-center gap-3">
+          <span className="h-px flex-1" style={{ background: `linear-gradient(to right, transparent, ${accent}, transparent)` }} />
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl text-white shadow-pop" style={{ background: accent }}>
+            <Flame size={22} strokeWidth={2.4} fill="currentColor" />
+          </span>
+          <span className="h-px flex-1" style={{ background: `linear-gradient(to right, transparent, ${accent}, transparent)` }} />
         </div>
-        <TrackSide track={match.match} align="right" />
+
+        <TrackRow track={match.match} accent={accent} />
       </div>
 
+      {/* footer */}
       <footer className="relative mt-5 flex items-center justify-between rounded-2xl bg-white/5 px-4 py-3">
-        <span className="text-xs font-medium text-white/60">{match.likes} personnes ont matché</span>
+        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-white/70">
+          <Flame size={12} fill="currentColor" /> {match.likes} ont matché
+        </span>
         <span className="text-xs font-bold uppercase tracking-widest" style={{ color: accent }}>en ligne</span>
       </footer>
     </article>
   );
 }
 
-function TrackSide({ track, align = "left" }: { track: Track; align?: "left" | "right" }) {
+function TrackRow({ track, accent }: { track: Track; accent: string }) {
   return (
-    <div className={`flex min-w-0 flex-col gap-2 ${align === "right" ? "items-end text-right" : "items-start"}`}>
-      <Cover color={track.color} size={104} />
-      <div className="w-full min-w-0">
-        <p className="truncate text-sm font-bold text-white">{track.title}</p>
-        <p className="truncate text-xs text-white/50">{track.artist}</p>
+    <div className="flex w-full items-center gap-4 rounded-2xl bg-white/5 p-3" style={{ boxShadow: `inset 0 0 0 1px ${accent}25` }}>
+      <Cover color={track.color} size={88} playable />
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-base font-extrabold text-white">{track.title}</p>
+        <p className="truncate text-sm text-white/55">{track.artist}</p>
       </div>
     </div>
   );
@@ -175,7 +271,7 @@ function MatchView() {
   const [query, setQuery] = useState("");
   const [published, setPublished] = useState(false);
 
-  const accent = source ? (matchTrack ? "var(--melo-green)" : "var(--melo-violet)") : "var(--melo-blue)";
+  const accent = source && matchTrack ? "var(--melo-pink)" : "var(--melo-violet)";
 
   const tracks = useMemo(() => {
     const q = query.toLowerCase();
@@ -188,16 +284,14 @@ function MatchView() {
 
   if (published) {
     return (
-      <section className="animate-pop rounded-[28px] border-2 p-8 text-center text-card-foreground shadow-glow" style={{ background: "var(--ink)", borderColor: "var(--melo-green)" }}>
-        <div className="bg-cool mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl shadow-pop">
+      <section className="animate-pop rounded-[28px] border-2 p-8 text-center text-card-foreground shadow-glow" style={{ background: "var(--ink)", borderColor: "var(--melo-pink)" }}>
+        <div className="bg-melo mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl shadow-pop">
           <Check size={28} strokeWidth={3} className="text-white" />
         </div>
-        <h3 className="text-xl font-bold text-white">Match publié&nbsp;✨</h3>
+        <h3 className="text-xl font-bold text-white">Match publié 🔥</h3>
         <p className="mt-2 text-sm text-white/60">Ton match part en vote. Tu seras notifié quand la communauté réagit.</p>
         <button
-          onClick={() => {
-            setSource(null); setMatchTrack(null); setVibe(""); setPicking("source"); setPublished(false);
-          }}
+          onClick={() => { setSource(null); setMatchTrack(null); setVibe(""); setPicking("source"); setPublished(false); }}
           className="bg-melo mt-6 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold text-white shadow-pop"
         >
           en proposer un autre <ArrowRight size={16} />
@@ -218,9 +312,9 @@ function MatchView() {
         style={{ background: "var(--ink)", border: `2px solid ${accent}`, boxShadow: `0 18px 40px -18px ${accent}80` }}
       >
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-          <Slot track={source} color="var(--melo-blue)" label="Son source" active={picking === "source"} onClick={() => setPicking("source")} />
+          <Slot track={source} color="var(--melo-violet)" label="Son source" active={picking === "source"} onClick={() => setPicking("source")} />
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl text-white shadow-pop" style={{ background: accent }}>
-            <Sparkles size={18} strokeWidth={2.6} />
+            <Flame size={18} strokeWidth={2.4} fill="currentColor" />
           </div>
           <Slot track={matchTrack} color="var(--melo-pink)" label="Son qui matche" active={picking === "match"} onClick={() => setPicking("match")} align="right" />
         </div>
@@ -249,7 +343,7 @@ function MatchView() {
                     setQuery("");
                   }}
                   className={`flex items-center gap-3 rounded-2xl border-2 bg-white p-2.5 text-left transition ${selected ? "shadow-pop" : "border-foreground/10 hover:border-foreground/20"}`}
-                  style={selected ? { borderColor: picking === "source" ? "var(--melo-blue)" : "var(--melo-pink)" } : undefined}
+                  style={selected ? { borderColor: picking === "source" ? "var(--melo-violet)" : "var(--melo-pink)" } : undefined}
                 >
                   <Cover color={t.color} size={44} className="!rounded-xl" />
                   <div className="min-w-0 flex-1">

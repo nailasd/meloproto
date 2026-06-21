@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Settings, Sparkles, Check, Music2, LogIn } from "lucide-react";
+import { Settings, Flame, Check, Music2, LogIn } from "lucide-react";
 import { Cover } from "@/components/Cover";
 import { PhoneShell } from "@/components/PhoneShell";
 import { currentUser } from "@/lib/mock-data";
@@ -36,8 +36,9 @@ function ProfilePage() {
         >
           {u.name[0].toUpperCase()}
           <span className="absolute -bottom-1.5 -right-1.5 flex h-8 w-8 items-center justify-center rounded-2xl bg-melo text-white shadow-pop">
-            <Sparkles size={14} strokeWidth={2.8} />
+            <Flame size={14} strokeWidth={2.8} fill="currentColor" />
           </span>
+
         </div>
         <h2 className="text-2xl font-extrabold tracking-tight">{u.name}</h2>
         <p className="text-sm text-foreground/50">{u.handle}</p>
@@ -85,8 +86,9 @@ function ProfilePage() {
               <div className="flex items-center gap-3">
                 <Cover color={m.source.color} size={48} className="!rounded-xl" />
                 <div className="flex h-6 w-6 items-center justify-center rounded-md" style={{ background: accent }}>
-                  <Sparkles size={11} className="text-white" strokeWidth={2.8} />
+                  <Flame size={11} className="text-white" strokeWidth={2.8} fill="currentColor" />
                 </div>
+
                 <Cover color={m.match.color} size={48} className="!rounded-xl" />
                 <div className="min-w-0 flex-1 text-right">
                   <p className="truncate text-[11px] font-bold" style={{ color: accent }}>{m.vibe}</p>

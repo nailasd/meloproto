@@ -51,7 +51,7 @@
   --background: oklch(0.97 0.015 95);
   --foreground: oklch(0.15 0.02 280);
 
-  --ink: oklch(0.14 0.025 270);
+  --ink: oklch(0.26 0.05 295);
 
   --card: var(--ink);
   --card-foreground: oklch(0.98 0.01 280);
@@ -59,10 +59,10 @@
   --popover: oklch(0.99 0.005 280);
   --popover-foreground: oklch(0.15 0.02 280);
 
-  --primary: oklch(0.65 0.22 280);
+  --primary: oklch(0.65 0.22 300);
   --primary-foreground: oklch(0.99 0 0);
 
-  --secondary: oklch(0.94 0.02 280);
+  --secondary: oklch(0.94 0.02 300);
   --secondary-foreground: oklch(0.15 0.02 280);
 
   --muted: oklch(0.93 0.015 95);
@@ -76,21 +76,24 @@
 
   --border: oklch(0.15 0.02 280 / 12%);
   --input: oklch(0.15 0.02 280 / 10%);
-  --ring: oklch(0.65 0.22 280);
+  --ring: oklch(0.65 0.22 300);
 
-  /* Melo brand tokens */
-  --melo-blue: #3b6dff;
-  --melo-green: #34e0a1;
+  /* Melo brand tokens — violet & pink only */
   --melo-violet: #8a5cff;
+  --melo-violet-soft: #b196ff;
   --melo-pink: #ff5ea8;
-  --melo-yellow: #ffd84a;
+  --melo-pink-soft: #ffa3cb;
+  --melo-blue: #8a5cff;   /* legacy alias → violet */
+  --melo-green: #ff5ea8;  /* legacy alias → pink */
+  --melo-yellow: #ff8fc5;
 
-  --gradient-melo: linear-gradient(135deg, var(--melo-blue), var(--melo-violet) 50%, var(--melo-pink));
-  --gradient-cool: linear-gradient(135deg, var(--melo-green), var(--melo-blue));
+  --gradient-melo: linear-gradient(135deg, var(--melo-violet), var(--melo-pink));
+  --gradient-cool: linear-gradient(135deg, var(--melo-violet), var(--melo-pink));
 
   --shadow-pop: 0 14px 40px -16px oklch(0.15 0.02 280 / 0.35);
-  --shadow-glow: 0 0 0 1px var(--melo-violet), 0 18px 40px -18px oklch(0.55 0.25 290 / 0.55);
+  --shadow-glow: 0 0 0 1px var(--melo-violet), 0 18px 40px -18px oklch(0.55 0.25 320 / 0.55);
 }
+
 
 @layer base {
   * { border-color: var(--color-border); }
@@ -104,10 +107,11 @@
     font-feature-settings: "ss01", "ss02";
     -webkit-font-smoothing: antialiased;
     background-image:
-      radial-gradient(60% 40% at 10% 0%, color-mix(in oklab, var(--melo-violet) 18%, transparent), transparent 70%),
-      radial-gradient(40% 30% at 100% 10%, color-mix(in oklab, var(--melo-pink) 18%, transparent), transparent 70%),
-      radial-gradient(50% 40% at 50% 100%, color-mix(in oklab, var(--melo-blue) 14%, transparent), transparent 70%);
+      radial-gradient(60% 40% at 10% 0%, color-mix(in oklab, var(--melo-violet) 22%, transparent), transparent 70%),
+      radial-gradient(40% 30% at 100% 10%, color-mix(in oklab, var(--melo-pink) 22%, transparent), transparent 70%),
+      radial-gradient(50% 40% at 50% 100%, color-mix(in oklab, var(--melo-violet) 16%, transparent), transparent 70%);
     background-attachment: fixed;
+
   }
 
   ::selection { background: var(--melo-violet); color: white; }
