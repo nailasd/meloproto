@@ -78,12 +78,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Melo — vote & match the sounds that share your vibe" },
+      { title: "Melo" },
       { name: "description", content: "Melo is a music discovery network where the community pairs songs by vibe." },
       { property: "og:title", content: "Melo" },
-      { property: "og:description", content: "Vote on song matches. Propose your own." },
+      { property: "og:description", content: "Melo is a music discovery network where the community pairs songs by vibe." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Melo" },
+      { name: "twitter:description", content: "Melo is a music discovery network where the community pairs songs by vibe." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/497c4e98-f7ca-4943-92c6-2208c9431047/id-preview-f2eeb7b2--044fc944-7cb0-4f96-ab03-547c7b6e214f.lovable.app-1782046665119.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/497c4e98-f7ca-4943-92c6-2208c9431047/id-preview-f2eeb7b2--044fc944-7cb0-4f96-ab03-547c7b6e214f.lovable.app-1782046665119.png" },
     ],
     links: [
       {
