@@ -12,6 +12,7 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "^5.2.10",
     "@fontsource-variable/outfit": "^5.2.8",
     "@fontsource/outfit": "^5.2.8",
     "@hookform/resolvers": "^5.2.2",
