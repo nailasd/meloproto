@@ -14,7 +14,101 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      matches: {
+        Row: {
+          author_id: string | null
+          author_name: string
+          created_at: string
+          genre: string
+          id: string
+          likes_count: number
+          match: Json
+          nopes_count: number
+          source: Json
+          vibe: string
+        }
+        Insert: {
+          author_id?: string | null
+          author_name?: string
+          created_at?: string
+          genre?: string
+          id?: string
+          likes_count?: number
+          match: Json
+          nopes_count?: number
+          source: Json
+          vibe: string
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string
+          created_at?: string
+          genre?: string
+          id?: string
+          likes_count?: number
+          match?: Json
+          nopes_count?: number
+          source?: Json
+          vibe?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_color: string
+          created_at: string
+          id: string
+          top_genres: string[]
+          username: string
+        }
+        Insert: {
+          avatar_color?: string
+          created_at?: string
+          id: string
+          top_genres?: string[]
+          username: string
+        }
+        Update: {
+          avatar_color?: string
+          created_at?: string
+          id?: string
+          top_genres?: string[]
+          username?: string
+        }
+        Relationships: []
+      }
+      votes: {
+        Row: {
+          created_at: string
+          id: string
+          liked: boolean
+          match_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          liked: boolean
+          match_id: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          liked?: boolean
+          match_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "votes_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "matches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
