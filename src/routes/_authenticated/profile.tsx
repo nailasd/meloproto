@@ -4,7 +4,7 @@ import { Cover } from "@/components/Cover";
 import { PhoneShell } from "@/components/PhoneShell";
 import { currentUser } from "@/lib/mock-data";
 
-export const Route = createFileRoute("/profile")({
+export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
     meta: [
       { title: "Profil musical — Melo" },

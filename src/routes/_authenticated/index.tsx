@@ -5,7 +5,7 @@ import { Cover } from "@/components/Cover";
 import { PhoneShell } from "@/components/PhoneShell";
 import { allTracks, mockMatches, vibes, type Match, type Track } from "@/lib/mock-data";
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
     meta: [
       { title: "Melo — vote & match the sounds that share your vibe" },
