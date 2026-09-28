@@ -5,7 +5,7 @@ import { Cover } from "@/components/Cover";
 import { PhoneShell } from "@/components/PhoneShell";
 import { allTracks, mockMatches, universes, type Match, type Track } from "@/lib/mock-data";
 
-export const Route = createFileRoute("/explore")({
+export const Route = createFileRoute("/_authenticated/explore")({
   head: () => ({
     meta: [
       { title: "Explorer — Melo" },

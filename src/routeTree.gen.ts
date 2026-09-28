@@ -9,104 +9,109 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ProfileRouteImport } from './routes/profile'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as ExploreRouteImport } from './routes/explore'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
+import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
+import { Route as AuthenticatedExploreRouteImport } from './routes/_authenticated/explore'
 
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
+const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
+  id: '/_authenticated/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedProfileRoute = AuthenticatedProfileRouteImport.update({
+  id: '/_authenticated/profile',
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
+const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
+  id: '/_authenticated/onboarding',
   path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ExploreRoute = ExploreRouteImport.update({
-  id: '/explore',
+const AuthenticatedExploreRoute = AuthenticatedExploreRouteImport.update({
+  id: '/_authenticated/explore',
   path: '/explore',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/explore': typeof ExploreRoute
-  '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRoute
+  '/explore': typeof AuthenticatedExploreRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/': typeof AuthenticatedIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/explore': typeof ExploreRoute
-  '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRoute
+  '/explore': typeof AuthenticatedExploreRoute
+  '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/profile': typeof AuthenticatedProfileRoute
+  '/': typeof AuthenticatedIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/explore': typeof ExploreRoute
-  '/onboarding': typeof OnboardingRoute
-  '/profile': typeof ProfileRoute
+  '/_authenticated/explore': typeof AuthenticatedExploreRoute
+  '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/profile': typeof AuthenticatedProfileRoute
+  '/_authenticated/': typeof AuthenticatedIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/explore' | '/onboarding' | '/profile'
+  fullPaths: '/explore' | '/onboarding' | '/profile' | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/explore' | '/onboarding' | '/profile'
-  id: '__root__' | '/' | '/explore' | '/onboarding' | '/profile'
+  to: '/explore' | '/onboarding' | '/profile' | '/'
+  id:
+    | '__root__'
+    | '/_authenticated/explore'
+    | '/_authenticated/onboarding'
+    | '/_authenticated/profile'
+    | '/_authenticated/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  ExploreRoute: typeof ExploreRoute
-  OnboardingRoute: typeof OnboardingRoute
-  ProfileRoute: typeof ProfileRoute
+  AuthenticatedExploreRoute: typeof AuthenticatedExploreRoute
+  AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
+  AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/explore': {
-      id: '/explore'
-      path: '/explore'
-      fullPath: '/explore'
-      preLoaderRoute: typeof ExploreRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
+    '/_authenticated/': {
+      id: '/_authenticated/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/profile': {
+      id: '/_authenticated/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/onboarding': {
+      id: '/_authenticated/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/explore': {
+      id: '/_authenticated/explore'
+      path: '/explore'
+      fullPath: '/explore'
+      preLoaderRoute: typeof AuthenticatedExploreRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  ExploreRoute: ExploreRoute,
-  OnboardingRoute: OnboardingRoute,
-  ProfileRoute: ProfileRoute,
+  AuthenticatedExploreRoute: AuthenticatedExploreRoute,
+  AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedProfileRoute: AuthenticatedProfileRoute,
+  AuthenticatedIndexRoute: AuthenticatedIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
