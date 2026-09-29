@@ -3,7 +3,8 @@ import { useMemo, useRef, useState } from "react";
 import { Heart, X, Flame, Search, Check, ArrowRight } from "lucide-react";
 import { Cover } from "@/components/Cover";
 import { PhoneShell } from "@/components/PhoneShell";
-import { allTracks, mockMatches, vibes, type Match, type Track } from "@/lib/mock-data";
+import { allTracks, vibes, type Match, type Track } from "@/lib/mock-data";
+import { useVoteQueue, useVote, usePublishMatch } from "@/lib/melo-data";
 
 export const Route = createFileRoute("/_authenticated/")({
   head: () => ({
@@ -69,13 +70,15 @@ function VoteView() {
   const [index, setIndex] = useState(0);
   const [votes, setVotes] = useState({ yes: 0, no: 0 });
   const [exiting, setExiting] = useState<"yes" | "no" | null>(null);
+  const queue = useVoteQueue();
+  const voteMut = useVote();
+  const [done, setDone] = useState<Set<string>>(new Set());
 
-  const pool = useMemo(
-    () => (filter === "all" ? mockMatches : mockMatches.filter((m) => m.genre === filter)),
-    [filter]
-  );
-  const safe = pool.length > 0 ? pool : mockMatches;
-  const current = safe[index % safe.length];
+  const pool = useMemo(() => {
+    const all = queue.data.filter((m) => !done.has(m.id));
+    return filter === "all" ? all : all.filter((m) => m.genre === filter);
+  }, [filter, queue.data, done]);
+  const current = pool[0];
   const accent = ACCENTS[index % ACCENTS.length];
 
   // swipe state
@@ -83,11 +86,14 @@ function VoteView() {
   const [drag, setDrag] = useState(0);
 
   const vote = (v: "yes" | "no") => {
-    if (exiting) return;
+    if (exiting || !current) return;
+    voteMut.mutate({ matchId: current.id, liked: v === "yes" });
+    const id = current.id;
     setVotes((s) => ({ ...s, [v]: s[v] + 1 }));
     setExiting(v);
     setTimeout(() => {
       setIndex((i) => i + 1);
+      setDone((d) => new Set(d).add(id));
       setExiting(null);
       setDrag(0);
     }, 260);
@@ -150,7 +156,15 @@ function VoteView() {
             transition: exiting || startX.current === null ? "transform 260ms cubic-bezier(0.22,1,0.36,1)" : "none",
           }}
         >
-          <VoteCard match={current} accent={accent} likeOpacity={likeOpacity} passOpacity={passOpacity} />
+          {current ? (
+            <VoteCard match={current} accent={accent} likeOpacity={likeOpacity} passOpacity={passOpacity} />
+          ) : (
+            <div className="flex min-h-[460px] flex-col items-center justify-center rounded-[32px] border-2 p-8 text-center text-white" style={{ background: "var(--ink)", borderColor: "var(--melo-violet)" }}>
+              <Flame size={32} className="mb-3" fill="currentColor" />
+              <p className="text-lg font-bold">{queue.isLoading ? "Chargement…" : "Tu as tout voté !"}</p>
+              {!queue.isLoading && <p className="mt-2 text-sm text-white/60">Reviens plus tard ou propose ton propre match.</p>}
+            </div>
+          )}
         </div>
       </div>
 
@@ -270,6 +284,7 @@ function MatchView() {
   const [picking, setPicking] = useState<"source" | "match" | null>("source");
   const [query, setQuery] = useState("");
   const [published, setPublished] = useState(false);
+  const publish = usePublishMatch();
 
   const accent = source && matchTrack ? "var(--melo-pink)" : "var(--melo-violet)";
 
@@ -382,8 +397,11 @@ function MatchView() {
       </div>
 
       <button
-        disabled={!canPublish}
-        onClick={() => setPublished(true)}
+        disabled={!canPublish || publish.isPending}
+        onClick={() => source && matchTrack && publish.mutate(
+          { source, match: matchTrack, vibe, genre: guessGenre(vibe) },
+          { onSuccess: () => setPublished(true) },
+        )}
         className="bg-melo flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-white shadow-pop transition disabled:cursor-not-allowed disabled:opacity-40"
       >
         publier le match <ArrowRight size={18} />
@@ -421,4 +439,14 @@ function Slot({ track, color, label, active, onClick, align = "left" }: {
       </div>
     </button>
   );
+}
+
+function guessGenre(vibe: string) {
+  const v = vibe.toLowerCase();
+  if (v.includes("rap")) return "rap-fr";
+  if (v.includes("love") || v.includes("heart")) return "love";
+  if (v.includes("drive")) return "drive";
+  if (v.includes("lo-fi") || v.includes("lofi")) return "lo-fi";
+  if (v.includes("euphor") || v.includes("hyper") || v.includes("rage")) return "euphoria";
+  return "chill";
 }
