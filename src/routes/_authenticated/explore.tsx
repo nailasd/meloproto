@@ -38,8 +38,8 @@ function ExplorePage() {
       const u = universes.find((u) => u.id === universe)!;
       return mockMatches.filter((m) => m.vibe.toLowerCase().includes(u.name.toLowerCase().slice(0, 4)));
     }
-    return mockMatches.slice(0, 4);
-  }, [picked, universe]);
+    return [...mockMatches].sort((a, b) => b.likes - a.likes).slice(0, 4);
+  }, [picked, universe, mockMatches]);
 
   return (
     <section>
