@@ -3,7 +3,8 @@ import { useMemo, useState } from "react";
 import { Search, Sparkles, TrendingUp } from "lucide-react";
 import { Cover } from "@/components/Cover";
 import { PhoneShell } from "@/components/PhoneShell";
-import { allTracks, mockMatches, universes, type Match, type Track } from "@/lib/mock-data";
+import { allTracks, universes, type Match, type Track } from "@/lib/mock-data";
+import { useMatches } from "@/lib/melo-data";
 
 export const Route = createFileRoute("/_authenticated/explore")({
   head: () => ({
@@ -30,6 +31,7 @@ function ExplorePage() {
     return allTracks.filter((t) => t.title.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q)).slice(0, 5);
   }, [query]);
 
+  const { data: mockMatches = [] } = useMatches();
   const matches: Match[] = useMemo(() => {
     if (picked) return mockMatches.filter((m) => m.source.id === picked.id || m.match.id === picked.id);
     if (universe) {

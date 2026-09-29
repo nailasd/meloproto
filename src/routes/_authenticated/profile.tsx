@@ -1,8 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Settings, Flame, Check, Music2, LogIn } from "lucide-react";
+import { LogOut, Flame, Check, Music2, LogIn } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
+import { useMyProfile } from "@/lib/melo-data";
 import { Cover } from "@/components/Cover";
 import { PhoneShell } from "@/components/PhoneShell";
-import { currentUser } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   head: () => ({
@@ -19,12 +22,20 @@ export const Route = createFileRoute("/_authenticated/profile")({
 });
 
 function ProfilePage() {
-  const u = currentUser;
+  const { data: u, isLoading } = useMyProfile();
+  const qc = useQueryClient();
+  const navigate = useNavigate();
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    qc.clear();
+    navigate({ to: "/auth" });
+  };
+  if (isLoading || !u) return <p className="py-20 text-center text-sm text-foreground/50">Chargement…</p>;
   return (
     <section className="pb-4">
       <div className="mb-2 flex justify-end">
-        <button className="flex h-9 w-9 items-center justify-center rounded-full border border-foreground/10 bg-white/70 backdrop-blur">
-          <Settings size={16} />
+        <button onClick={signOut} aria-label="Se déconnecter" className="flex h-9 items-center gap-1.5 rounded-full border border-foreground/10 bg-white/70 px-3 text-xs font-bold backdrop-blur">
+          <LogOut size={14} /> Déconnexion
         </button>
       </div>
 
@@ -56,6 +67,7 @@ function ProfilePage() {
           <Music2 size={12} /> Profil musical
         </p>
         <div className="flex flex-wrap gap-2">
+          {u.topGenres.length === 0 && <p className="text-sm text-white/50">Connecte ton compte musical pour remplir ton profil.</p>}
           {u.topGenres.map((g, i) => {
             const colors = ["var(--melo-blue)", "var(--melo-pink)", "var(--melo-green)", "var(--melo-violet)", "var(--melo-yellow)"];
             const c = colors[i % colors.length];
@@ -78,6 +90,7 @@ function ProfilePage() {
       {/* recent matches */}
       <h3 className="mb-3 text-sm font-bold uppercase tracking-widest text-foreground/60">Derniers sons matchés</h3>
       <div className="grid gap-3">
+        {u.recentMatches.length === 0 && <p className="text-sm text-foreground/50">Tu n'as pas encore publié de match.</p>}
         {u.recentMatches.map((m, i) => {
           const accents = ["var(--melo-pink)", "var(--melo-blue)", "var(--melo-green)"];
           const accent = accents[i % accents.length];
