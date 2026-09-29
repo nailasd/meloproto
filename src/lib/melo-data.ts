@@ -21,8 +21,8 @@ export type DbMatch = Match & { authorId: string | null; nopes: number };
 function toMatch(r: Row): DbMatch {
   return {
     id: r.id,
-    source: { cover: "", ...(r.source as Track) },
-    match: { cover: "", ...(r.match as Track) },
+    source: { ...(r.source as Track), cover: "" },
+    match: { ...(r.match as Track), cover: "" },
     vibe: r.vibe,
     genre: r.genre as Match["genre"],
     author: { name: r.author_name, avatarColor: AVATAR_COLORS[r.author_name.length % AVATAR_COLORS.length] },
