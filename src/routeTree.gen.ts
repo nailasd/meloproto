@@ -15,6 +15,7 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedExploreRouteImport } from './routes/_authenticated/explore'
+import { Route as ApiSpotifyCallbackRouteImport } from './routes/api/spotify/callback'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -45,6 +46,11 @@ const AuthenticatedExploreRoute = AuthenticatedExploreRouteImport.update({
   path: '/explore',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiSpotifyCallbackRoute = ApiSpotifyCallbackRouteImport.update({
+  id: '/api/spotify/callback',
+  path: '/api/spotify/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/explore': typeof AuthenticatedExploreRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
+  '/api/spotify/callback': typeof ApiSpotifyCallbackRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/profile': typeof AuthenticatedProfileRoute
   '/': typeof AuthenticatedIndexRoute
+  '/api/spotify/callback': typeof ApiSpotifyCallbackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -68,12 +76,25 @@ export interface FileRoutesById {
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/api/spotify/callback': typeof ApiSpotifyCallbackRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/explore' | '/onboarding' | '/profile'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/explore'
+    | '/onboarding'
+    | '/profile'
+    | '/api/spotify/callback'
   fileRoutesByTo: FileRoutesByTo
-  to: '/auth' | '/explore' | '/onboarding' | '/profile' | '/'
+  to:
+    | '/auth'
+    | '/explore'
+    | '/onboarding'
+    | '/profile'
+    | '/'
+    | '/api/spotify/callback'
   id:
     | '__root__'
     | '/_authenticated'
@@ -82,11 +103,13 @@ export interface FileRouteTypes {
     | '/_authenticated/onboarding'
     | '/_authenticated/profile'
     | '/_authenticated/'
+    | '/api/spotify/callback'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ApiSpotifyCallbackRoute: typeof ApiSpotifyCallbackRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -133,6 +156,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExploreRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/spotify/callback': {
+      id: '/api/spotify/callback'
+      path: '/api/spotify/callback'
+      fullPath: '/api/spotify/callback'
+      preLoaderRoute: typeof ApiSpotifyCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -156,6 +186,7 @@ const AuthenticatedRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ApiSpotifyCallbackRoute: ApiSpotifyCallbackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

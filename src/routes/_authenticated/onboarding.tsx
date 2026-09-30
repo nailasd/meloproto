@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Sparkles, ArrowRight } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { getSpotifyAuthUrl } from "@/lib/spotify.functions";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({
@@ -26,10 +28,29 @@ function OnboardingPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [syncing, setSyncing] = useState(false);
   const [done, setDone] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fetchSpotifyUrl = useServerFn(getSpotifyAuthUrl);
 
-  const sync = () => {
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("spotify") === "done") setDone(true);
+    if (params.get("spotify") === "error") setError("La connexion Spotify a échoué. Réessaie.");
+  }, []);
+
+  const sync = async () => {
+    if (selected !== "spotify") {
+      setError("Seul Spotify est disponible pour l'instant — les autres arrivent bientôt.");
+      return;
+    }
     setSyncing(true);
-    setTimeout(() => { setSyncing(false); setDone(true); }, 1600);
+    setError(null);
+    try {
+      const { url } = await fetchSpotifyUrl();
+      window.location.href = url;
+    } catch {
+      setSyncing(false);
+      setError("Impossible de contacter Spotify. Réessaie.");
+    }
   };
 
   return (
@@ -86,11 +107,13 @@ function OnboardingPage() {
             className="bg-melo mt-8 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-white shadow-pop transition disabled:cursor-not-allowed disabled:opacity-40"
           >
             {syncing ? (
-              <><Sparkles size={18} className="animate-pulse" /> Synchronisation…</>
+              <><Sparkles size={18} className="animate-pulse" /> Redirection vers Spotify…</>
             ) : (
               <>Continuer <ArrowRight size={18} /></>
             )}
           </button>
+
+          {error && <p className="mt-3 text-center text-sm font-semibold text-[var(--melo-pink)]">{error}</p>}
 
           <button
             onClick={() => navigate({ to: "/" })}
