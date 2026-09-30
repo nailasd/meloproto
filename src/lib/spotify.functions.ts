@@ -1,4 +1,4 @@
-import { createServerFn } from "@tanstack/react-start";
+import { createServerFn, getRequest } from "@tanstack/react-start";
 import { createHmac } from "crypto";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
@@ -14,7 +14,7 @@ export const getSpotifyAuthUrl = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const secret = process.env["SPOTIFY_CLIENT_SECRET"]!;
-    const origin = new URL(context.request.url).origin;
+    const origin = new URL(getRequest().url).origin;
     const redirectUri = `${origin}/api/spotify/callback`;
     const params = new URLSearchParams({
       client_id: SPOTIFY_CLIENT_ID,
