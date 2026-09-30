@@ -58,7 +58,7 @@ function AuthPage() {
   return (
     <div className="mx-auto flex min-h-[100dvh] max-w-[420px] flex-col justify-center px-6 py-10">
       <h1 className="text-center text-5xl font-extrabold tracking-tight">Melo</h1>
-      <p className="mb-8 mt-2 text-center text-sm text-foreground/60">Les sons qui partagent la même vibe.</p>
+      <p className="mb-8 mt-2 text-center text-sm text-foreground/60">Your next favourite song.</p>
 
       <div className="rounded-[28px] border-2 p-6 shadow-pop" style={{ background: "var(--ink)", borderColor: "var(--melo-violet)" }}>
         <div className="mb-5 flex rounded-full bg-white/10 p-1">
