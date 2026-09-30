@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Sparkles, ArrowRight } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { getSpotifyAuthUrl } from "@/lib/spotify.functions";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   head: () => ({

@@ -8,6 +8,13 @@
       "when": 1790615866186,
       "tag": "0000_melo_accounts_matches_votes",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1790801642153,
+      "tag": "0001_create_spotify_connections",
+      "breakpoints": true
     }
   ]
 }
