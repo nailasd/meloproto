@@ -107,11 +107,13 @@ function OnboardingPage() {
             className="bg-melo mt-8 flex w-full items-center justify-center gap-2 rounded-2xl py-4 text-base font-bold text-white shadow-pop transition disabled:cursor-not-allowed disabled:opacity-40"
           >
             {syncing ? (
-              <><Sparkles size={18} className="animate-pulse" /> Synchronisation…</>
+              <><Sparkles size={18} className="animate-pulse" /> Redirection vers Spotify…</>
             ) : (
               <>Continuer <ArrowRight size={18} /></>
             )}
           </button>
+
+          {error && <p className="mt-3 text-center text-sm font-semibold text-[var(--melo-pink)]">{error}</p>}
 
           <button
             onClick={() => navigate({ to: "/" })}
